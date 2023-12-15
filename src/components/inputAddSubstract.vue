@@ -16,8 +16,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emits = defineEmits<{
-  '@enter': [value: number]
-  'update:modelValue': [value: number]
+  '@enter': [value: number | string]
+  'update:modelValue': [value: number | string]
 }>()
 
 const inputValue = computed({
@@ -29,7 +29,12 @@ const inputValue = computed({
   }
 })
 
-const eventEnter = ($e) => emits('@enter', $e.target.value)
+const eventEnter = ($e: KeyboardEvent) => {
+  const inputElement = $e.target as HTMLInputElement;
+
+  if (inputElement && inputElement.value) {
+    emits('@enter', inputElement.value);
+  }}
 
 
 const addValue = computed(()=>props.addValue ?? props.value)
@@ -38,45 +43,47 @@ const substractValue = computed(()=>props.substractValue ?? props.value)
 const substract = () => {
   
   if (props.minmaxValue) {
-    if ((inputValue.value - substractValue.value) < props.minmaxValue[0] ) {
+  
+
+    if ((inputValue.value as number - substractValue.value) < props.minmaxValue[0] ) {
       inputValue.value = props.minmaxValue[0]
       return
     } 
     if (props.minmaxValue.length > 0) {
-      if (inputValue.value <= props.minmaxValue[0]) return
+      if (inputValue.value as number <= props.minmaxValue[0]) return
     }
   }
-  inputValue.value -= substractValue.value
+  inputValue.value = inputValue.value as number - substractValue.value
 }
 
 const add = () => {
   if (props.minmaxValue) {
-    if ((inputValue.value + addValue.value) > props.minmaxValue[1]) {
+    if ((inputValue.value as number + addValue.value) > props.minmaxValue[1]) {
       inputValue.value = props.minmaxValue[1]
       return
     }
     if (props.minmaxValue[1]) {
-      if (inputValue.value >= props.minmaxValue[1]) return
+      if (inputValue.value as number>= props.minmaxValue[1]) return
     }
   }
-  inputValue.value +=  addValue.value  
+  inputValue.value = Number(inputValue.value) + Number(addValue.value);
 }
 
 </script>
 
 <template>
-   <div>
-      <label for=""> {{text}} </label>
-        <div>
-          <button @click="substract">-</button>
-          <input 
-            type="number"
-            v-model="inputValue"
-            @keyup.enter="eventEnter"
-          >    
-          <button @click="add">+</button>
-        </div>
-    </div>
+  <div style="text-align: center;">
+    <label for=""> {{text}} </label>
+      <div>
+        <button @click="substract">-</button>
+        <input 
+          type="number"
+          v-model="inputValue"
+          @keyup.enter="eventEnter"
+        >    
+        <button @click="add">+</button>
+      </div>
+  </div>
 </template>
 
 <style scoped>

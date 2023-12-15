@@ -8,7 +8,8 @@ export function useCatImage({ fact, wordNumber = ref(1) }: {fact:Ref<string>, wo
     if(!fact.value) return    
     
     const firstWordFact = fact.value.split(' ', wordNumber.value).join(' ')    
-
+    
+    console.log(firstWordFact);
     img.value = `${IMAGE_CAT_ENPOINT}${firstWordFact}`
   },
     { immediate: true  }
