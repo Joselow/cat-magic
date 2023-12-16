@@ -88,7 +88,6 @@ const add = () => {
 
 <style scoped>
 input{
-  /* max-width: 100px; */
   max-width: 50%;
   border-radius: 8px;
   border: 1px solid transparent;
@@ -104,7 +103,7 @@ input{
 
 @media screen and (max-width: 390px) {
   input {
-    max-width: 10%;
+    max-width: 60%;
   }
 }
 </style>

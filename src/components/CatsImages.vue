@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { useVirtualList, useInfiniteScroll, watchDebounced, } from '@vueuse/core'; 
+import { useVirtualList, useInfiniteScroll, } from '@vueuse/core'; 
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { useCatImage } from '@/composables/useCatImage';
+import { useDebounceRef } from "@/composables/useDebounceRef.js"
+import { useScrollToTop } from "@/composables/useScrollToTop.js"
 
 const catsNumberValue = ref([1])
-const infiniteScrolling = ref(true)
 
-const fact = ref('cat')
+const fact = useDebounceRef('cat', 800)
+
 const wordNumber = computed(()=> fact.value.split(' ').length)
 const { img } = useCatImage({ fact, wordNumber })
 
@@ -16,61 +18,52 @@ const { list, wrapperProps, containerProps }  = useVirtualList(
   },
 )
 
-const spanRef = ref<HTMLSpanElement | null>(null)
+useInfiniteScroll(containerProps.ref, () => {
+  catsNumberValue.value = [...catsNumberValue.value, ...Array.from(Array(10).keys())];
+})
 
-watch(infiniteScrolling, (value) => {
-  
-  if (value) {
-    useInfiniteScroll(containerProps.ref, () => {
-        catsNumberValue.value = [...catsNumberValue.value, ...Array.from(Array(10).keys())];
-      });
-  } 
-
-}, { immediate: true }
-)
-
+let scrollToTopFn: () => void;
+const showScrollButtonValue = ref(false)
 
 onMounted(() => {
   document.body.style.overflow = 'hidden';
+
+  const { scrollToTop, showScrollButton } = useScrollToTop(containerProps.ref.value!)
+  scrollToTopFn = scrollToTop
+  watch (showScrollButton, (value) => showScrollButtonValue.value = value)
 })
 
 onUnmounted(() => {
-  document.body.style.overflow = 'visible';
+  document.body.style.overflow = 'visible'
 })
-// watchDebounced(
-//   fact,
-//   () => { console.log('changed!') },
-//   { debounce: 2000, maxWait: 1000 },
-// )
+
 </script>
 
 <template>
-  <span ref="spanRef"></span>
   <section>
     <span> write something and view the change</span>
     <input type="text" v-model="fact"
     >  
-    <span>this has infinite scrolling and list virtualization</span>
-    <!-- <button 
-      :class="{'selected': infiniteScrolling, 'no-selected': !infiniteScrolling }"
-      @click="infiniteScrolling = !infiniteScrolling"> Infinite Scrolling </button>     -->
+    <span>this has infinite scrolling and list virtualization</span>  
   </section>
   <div v-bind="containerProps"
     class="container-cats"
   >
-        <div v-bind="wrapperProps" class="cats" ref="containerCat">
+        <div v-bind="wrapperProps" class="cats">
           <div  v-for="{ index } in list" :key="index" 
             class="cats-img"
           >
           <img 
-            v-if="true"
             :src="`${img} ${index}`"
             alt="Imagen obtained by first word of cat'"
             title="Imagen obtained by first word of cat"
-            />  
+            />   
           </div>
         </div>
       </div>
+      <button 
+    class="toTopButton"    
+    v-if="showScrollButtonValue" @click="scrollToTopFn">↑</button>
 </template>
 
 <style scoped>

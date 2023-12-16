@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onUnmounted , ref, watch } from 'vue';
 import InputAddSubs from './inputAddSubstract.vue';
 import { useCatFact } from '@/composables/useCatFact';
 import { useCatImage } from '@/composables/useCatImage';
@@ -35,12 +35,10 @@ const addToArrayCats = (number: number) => {
 
 const scrollObserver = ref<HTMLDivElement | null>(null);
 
-
 const debounceInterval = 15;
 let lastExecution: null | number = null;
 
 const handleScroll = () => {
-  
   const distanceToBottom = scrollObserver.value?.getBoundingClientRect().bottom 
   if (!distanceToBottom) return;
 
@@ -50,15 +48,12 @@ const handleScroll = () => {
 
   lastExecution = currentExecution;
 
-  if (distanceToBottom <= window.innerHeight) {    
-    // catsNumberValue.value += [...catsNumberValue.value,  ];    
+  if (distanceToBottom <= window.innerHeight) {        
     addToArrayCats(catsNumber.value)
-
   }
 }
 
 window.addEventListener('scroll', handleScroll);
-
 
 let heighItemPX = 120
 
@@ -73,17 +68,12 @@ const adjustHeight = () => {
 adjustHeight()
 window.addEventListener('resize', adjustHeight)
 
-
 const showItems = (heighItem: number) => {
   const viewportHeight = window.innerHeight
 
   const header = containerCat.value?.getBoundingClientRect().top ?? 0
-  const ITEM_NUMBERS = Math.floor((viewportHeight - header) / heighItem)
-
-
-  // catsNumberValue.value += ITEM_NUMBERS;  
+  const ITEM_NUMBERS = Math.floor((viewportHeight - header) / heighItem)  
   addToArrayCats( ITEM_NUMBERS)
-
 }
 
 watch(infiniteScrolling, (value) => {
@@ -103,10 +93,16 @@ const highlightWords = (value: string, color: string = '#FFC300') => {
 }
 
 const factHTML = ref('')
+
 watch(fact, (value) => {
   if (value) {
     highlightWords(value)   
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', adjustHeight)
+  window.removeEventListener('scroll', handleScroll)
 })
 
 </script>
