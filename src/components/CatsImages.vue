@@ -6,10 +6,9 @@ import { useDebounceRef } from "@/composables/useDebounceRef.js"
 import { useScrollToTop } from "@/composables/useScrollToTop.js"
 
 const catsNumberValue = ref([1])
-
 const fact = useDebounceRef('cat', 800)
-
 const wordNumber = computed(()=> fact.value.split(' ').length)
+
 const { img } = useCatImage({ fact, wordNumber })
 
 const { list, wrapperProps, containerProps }  = useVirtualList(
@@ -18,7 +17,7 @@ const { list, wrapperProps, containerProps }  = useVirtualList(
   },
 )
 
-useInfiniteScroll(containerProps.ref, () => {
+useInfiniteScroll(containerProps.ref, () => { // why here the template ref exists??
   catsNumberValue.value = [...catsNumberValue.value, ...Array.from(Array(10).keys())];
 })
 
@@ -40,11 +39,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section>
-    <span> write something and view the change</span>
+  <section class="info">
     <input type="text" v-model="fact"
+      placeholder="write something and view the change "
     >  
-    <span>this has infinite scrolling and list virtualization</span>  
   </section>
   <div v-bind="containerProps"
     class="container-cats"
@@ -54,7 +52,7 @@ onUnmounted(() => {
             class="cats-img"
           >
           <img 
-            :src="`${img} ${index}`"
+            :src="`${img} ${index+1}`"
             alt="Imagen obtained by first word of cat'"
             title="Imagen obtained by first word of cat"
             />   
@@ -67,8 +65,11 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.info {
+    gap: 7px;
+}
 input {
-  /* max-width: 50%; */
+  width: 90%;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.3em 1em;
@@ -80,11 +81,11 @@ input {
   margin: 0 5px;
 }
 .container-cats {
-  margin-top: 15px;
+  margin-top: 10px;
   width: 100vw;
   height: 80vh; 
   border-top: 1px solid #eee;
-  padding-top: 25px;
+  padding-top: 20px;
 }
 .cats-img {
   width: 300px;

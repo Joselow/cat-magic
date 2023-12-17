@@ -5,9 +5,9 @@ import { ref, type Ref, reactive } from "vue"
 export function useCatFact()  {  
   const fact: Ref<string> = ref('')
   const loading = ref(false)
-  const responseValue = reactive({
+  const responseValue: {msg: string , success: boolean | undefined} = reactive({
     msg: '',
-    success: false
+    success: undefined 
   })
 
   const fetchCats = async() => {
@@ -16,8 +16,8 @@ export function useCatFact()  {
     loading.value = false
 
     if (data) fact.value = data
+    if (success) responseValue.success = success
     responseValue.msg = message
-    responseValue.success = success
   }
 
   // fetchCats()

@@ -4,7 +4,7 @@ const IMAGE_CAT_ENPOINT = 'https://cataas.com/cat/says/'
 export function useCatImage({ fact, wordNumber = ref(1) }: {fact:Ref<string>, wordNumber?: Ref<number>}){
   const img = ref('')
   
-  watch(fact, () => {        
+  watch(fact, () => {      
     if(!fact.value) return    
     
     const firstWordFact = fact.value.split(' ', wordNumber.value).join(' ')        

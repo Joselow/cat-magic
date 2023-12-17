@@ -1,6 +1,6 @@
 import { ref, onUnmounted } from 'vue'
 
-export function useScrollToTop (target: Window | Element = window, scrolled: number = 20) {
+export function useScrollToTop (target: Window | Element = window, scrolled: number = 200) {
   const showScrollButton = ref(false)
   
   const handleScroll = () => {

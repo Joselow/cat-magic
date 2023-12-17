@@ -1,21 +1,39 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 import CatsByFact from "./components/CatsByFact.vue"
 import CatsImages from '@/components/CatsImages.vue'
 import { useScrollToTop } from "@/composables/useScrollToTop.js"
 
 const { scrollToTop, showScrollButton } = useScrollToTop()
+const OPTIONS = {
+  OPTION_ONE: 'optionOne',
+  OPTION_TWO: 'optionTwo',
+}
+
+// const optionOne = ref(localStorage.getItem('option') === OPTIONS.OPTION_ONE)
+// const optionTwo = ref(localStorage.getItem('option') === OPTIONS.OPTION_TWO)
+
 const optionOne = ref(true)
 const optionTwo = ref(false)
 
+onBeforeMount(() => {
+  optionOne.value = localStorage.getItem('option') === OPTIONS.OPTION_ONE
+  optionTwo.value = localStorage.getItem('option') === OPTIONS.OPTION_TWO
+  if (!optionOne.value && optionTwo.value) {
+    optionOne.value = true
+  }
+})
+
 const selectOption = (option: 'optionOne' | 'optionTwo') => {
-  if (option === 'optionOne') {
+  if (option === OPTIONS.OPTION_ONE) {
     optionOne.value = true
     optionTwo.value = false
+    window.localStorage.setItem('option', OPTIONS.OPTION_ONE)
   }
   else {
     optionTwo.value = true
     optionOne.value = false
+    window.localStorage.setItem('option', OPTIONS.OPTION_TWO)
   }
 }
 const optionOneClass = computed(() => optionOne.value ? 'option1-selected' : 'option1')
@@ -27,16 +45,6 @@ const componenetSelected = computed(() => {
   return null
 })
 
-// const handleScroll = () => {
-//   showScrollButton.value = window.scrollY > 20;
-// }
-
-// window.addEventListener("scroll", handleScroll );
-
-// const scrollToTop = () => {
-//   window.scrollTo({ top: 0, behavior: 'smooth' });
-// };
-// const showScrollButton = ref(false)
 </script>
 
 <template>
@@ -45,11 +53,13 @@ const componenetSelected = computed(() => {
   </header>
   <section class="options">
     <button :class="optionOneClass"
+      title="obtaind images acording words"
       @click="selectOption('optionOne')"
     > Get images by fact </button>
     <button :class="optionTwoClass"
+      title="this has infinite scrolling and list virtualization"
       @click="selectOption('optionTwo')"
-    > Images </button>
+    > Images</button>
   </section>
 
   <main>
@@ -62,6 +72,9 @@ const componenetSelected = computed(() => {
 </template>
 
 <style scoped>
+.options {
+  flex-wrap: nowrap;
+}
 .options button {
   /* border-radius: 6px; */
   /* border: 1px solid transparent; */
@@ -84,8 +97,14 @@ const componenetSelected = computed(() => {
 }
 @media screen and (max-width: 390px) {
   .options button {
-    width: 60%;
-    padding: 0.4em .5em; 
+    width: 100%;
+    padding: 0.2em ; 
+    margin: 0;
+  }
+  .options {
+    width: 95%;
+    gap: 5px;
+    margin: auto;
   }
 }
 </style> 

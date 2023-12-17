@@ -54,14 +54,14 @@ a:hover {
   color: #222;
   font-weight: bolder;
   border: none;
-  border-radius: 5px;
+  border-radius: 20pxx;
   padding: 10px 17px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .toTopButton:hover {
-  background-color: #0dc72c;
+  background-color: #03d126;
 }
 
 h1 {
@@ -136,4 +136,19 @@ section{
   gap: 20px ;
   margin: 0 ;
   padding: 10px ;
+}
+@media screen and (max-width: 390px) {
+  section{
+    gap: 15px ;
+
+  }
+  h1 {
+    font-size: xx-large ;
+    padding: 0;
+    margin: 10px 0 0;
+  }
+
+  *{
+    font-size: 1em;
+  }
 }

@@ -3,23 +3,28 @@ import { onUnmounted , ref, watch } from 'vue';
 import InputAddSubs from './inputAddSubstract.vue';
 import { useCatFact } from '@/composables/useCatFact';
 import { useCatImage } from '@/composables/useCatImage';
-
+import { highlightWords } from "@/utils/highlightWords"
 const { fact, fetchCats, responseValue, loading } = useCatFact()
 fetchCats()
 
-const catsNumber = ref(1)
 const wordNumber = ref(1)
+const catsNumber = ref(1)
 const catsNumberValue = ref([1])
 const infiniteScrolling = ref(false)
+const scrollObserver = ref<HTMLDivElement | null>(null);
+const containerCat = ref<HTMLDivElement | null>(null);
+const paragraph = ref<HTMLParagraphElement | null>(null);
 
 const { img } = useCatImage({ fact, wordNumber})
+
+const highlightColor = '#F1215D'
 
 const resetData = () => {
   infiniteScrolling.value = false
   changeArrayCats(1)
   wordNumber.value = 1
   catsNumber.value = 1
-  highlightWords(fact.value, 'rgba(255, 255, 255, 0.87)')
+  factHTML.value = highlightWords({ text: fact.value, color: highlightColor, wordNumber: wordNumber.value})
 }
 
 const getCats = async() => {
@@ -32,8 +37,6 @@ const addToArrayCats = (number: number) => {
   const newLen = number + catsNumberValue.value.length
   catsNumberValue.value = [...Array(newLen)].map((_, index) => index + 1)
 }
-
-const scrollObserver = ref<HTMLDivElement | null>(null);
 
 const debounceInterval = 15;
 let lastExecution: null | number = null;
@@ -55,23 +58,24 @@ const handleScroll = () => {
 
 window.addEventListener('scroll', handleScroll);
 
-let heighItemPX = 120
+let heighItemPX = 90
 
 const adjustHeight = () => {
   if (window.innerWidth <= 390) {
     heighItemPX = 400
   } else {
-    heighItemPX = 120;
+    heighItemPX = 90;
   }
 }
 
 adjustHeight()
-window.addEventListener('resize', adjustHeight)
 
 const showItems = (heighItem: number) => {
   const viewportHeight = window.innerHeight
 
   const header = containerCat.value?.getBoundingClientRect().top ?? 0
+  console.log(header,  window.innerHeight);
+
   const ITEM_NUMBERS = Math.floor((viewportHeight - header) / heighItem)  
   addToArrayCats( ITEM_NUMBERS)
 }
@@ -82,36 +86,27 @@ watch(infiniteScrolling, (value) => {
   }
 })
 
-const containerCat = ref<HTMLDivElement | null>(null);
-
-const paragraph = ref<HTMLParagraphElement | null>(null);
-
-const highlightWords = (value: string, color: string = '#FFC300') => {  
-    const words = value.split(' ')
-    const highlightedWords = words?.slice(0, wordNumber.value).join(' ');  
-    factHTML.value = `<span style="color:${color}">${highlightedWords}</span> ${words?.slice(wordNumber.value).join(' ')}`;
-}
-
 const factHTML = ref('')
 
 watch(fact, (value) => {
   if (value) {
-    highlightWords(value)   
+    factHTML.value = highlightWords({ text: value, color: highlightColor, wordNumber: wordNumber.value})
   }
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', adjustHeight)
   window.removeEventListener('scroll', handleScroll)
 })
 
 </script>
 
 <template>
-  <span v-show="loading">loading ... </span>
-  <span v-if="!responseValue.success"> {{ responseValue.msg }} </span>
+  <!-- <span v-show="loading">loading ... </span> -->
+  <span class="msg" 
+    v-if="responseValue.success === false"
+  > {{ responseValue.msg }} </span>
 
-  <section>
+  <section>    
     <InputAddSubs text="Number of cats" 
       v-model="catsNumber"
       />
@@ -121,6 +116,7 @@ onUnmounted(() => {
       />
   </section> 
   <section>
+
     <button 
       @click="getCats"> Get a cat </button>
     <button 
@@ -132,7 +128,13 @@ onUnmounted(() => {
 
   <p ref="paragraph" v-html="factHTML">  </p>
 
-  <div class="cats" ref="containerCat">
+  <div style="text-align: center;">
+    <span v-show="loading" style="color: rgb(226, 110, 43);">loading ... </span>
+  </div>
+
+  <div class="cats" ref="containerCat"
+    v-show="!loading"
+  >
         <template v-for="item in catsNumberValue" :key="item">          
           <img 
             class="cats-img"
@@ -155,8 +157,17 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-#focus {
-  color: aqua;
+.msg {
+  background-color: aqua;
+  text-align: center;
+  padding: 10px 60px;
+  border-radius: 20px;
+  color: #221;
+  font-weight: bolder;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);    
 }
 
 p {
@@ -195,6 +206,10 @@ p {
   .cats-img  {
     width: 320px !important; 
     height: 400px !important;
+  }
+  .msg {
+    width: 90%;
+    padding: 3px 60px;
   }
 
 }
