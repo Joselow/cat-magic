@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  computed } from 'vue';
+import {  computed, ref } from 'vue';
 
 interface Props {
   text: string
@@ -57,7 +57,7 @@ const substract = () => {
 }
 
 const add = () => {
-  if (props.minmaxValue) {
+  if (props.minmaxValue && props.minmaxValue[1]) {
     if ((inputValue.value as number + addValue.value) > props.minmaxValue[1]) {
       inputValue.value = props.minmaxValue[1]
       return
@@ -68,20 +68,23 @@ const add = () => {
   }
   inputValue.value = Number(inputValue.value) + Number(addValue.value);
 }
+const owo = ref(false)
 
 </script>
 
 <template>
+    <h3 v-if="owo">wn</h3>
+  <button id="test" @click="owo = !owo">a</button>
   <div style="text-align: center;">
     <label for=""> {{text}} </label>
       <div>
-        <button @click="substract">-</button>
+        <button @click="substract" data-test="btn-substract">-</button>
         <input 
           type="number"
           v-model="inputValue"
           @keyup.enter="eventEnter"
         >    
-        <button @click="add">+</button>
+        <button @click="add" id="a" data-test="btnAdd">+</button>
       </div>
   </div>
 </template>

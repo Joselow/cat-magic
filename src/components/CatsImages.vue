@@ -17,7 +17,7 @@ const { list, wrapperProps, containerProps }  = useVirtualList(
   },
 )
 
-useInfiniteScroll(containerProps.ref, () => { // why here the template ref exists??
+useInfiniteScroll(containerProps.ref, () => { // rendered is not necesary (ref template)
   catsNumberValue.value = [...catsNumberValue.value, ...Array.from(Array(10).keys())];
 })
 
@@ -28,10 +28,10 @@ onMounted(() => {
   document.body.style.overflow = 'hidden';
 
   const { scrollToTop, showScrollButton } = useScrollToTop(containerProps.ref.value!)
-  scrollToTopFn = scrollToTop
-  watch (showScrollButton, (value) => showScrollButtonValue.value = value)
-})
 
+  scrollToTopFn = scrollToTop
+  watch(showScrollButton, (value) => showScrollButtonValue.value = value)
+})
 onUnmounted(() => {
   document.body.style.overflow = 'visible'
 })
@@ -47,39 +47,44 @@ onUnmounted(() => {
   <div v-bind="containerProps"
     class="container-cats"
   >
-        <div v-bind="wrapperProps" class="cats">
-          <div  v-for="{ index } in list" :key="index" 
-            class="cats-img"
-          >
-          <img 
-            :src="`${img} ${index+1}`"
-            alt="Imagen obtained by first word of cat'"
-            title="Imagen obtained by first word of cat"
-            />   
-          </div>
-        </div>
+    <div v-bind="wrapperProps" class="cats">
+      <div v-for="{ index } in list" :key="index" 
+        class="cats-img"
+      >
+      <img 
+        :src="`${img} ${index+1}`"
+        alt="Imagen obtained by first word of cat'"
+        title="Imagen obtained by first word of cat"
+        />   
       </div>
-      <button 
+    </div>
+  </div>
+  <button 
     class="toTopButton"    
     v-if="showScrollButtonValue" @click="scrollToTopFn">↑</button>
 </template>
 
 <style scoped>
-.info {
-    gap: 7px;
-}
-input {
-  width: 90%;
+
+.info input {
+  width: 35%;  
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.3em 1em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #00000098;
   transition: border-color 0.25s;
   margin: 0 5px;
 }
+
+@media screen and (max-width: 390px) {
+  .info input {
+    width: 90%;  
+  }
+}
+
 .container-cats {
   margin-top: 10px;
   width: 100vw;

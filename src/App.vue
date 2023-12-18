@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed } from 'vue'
 import CatsByFact from "./components/CatsByFact.vue"
 import CatsImages from '@/components/CatsImages.vue'
 import { useScrollToTop } from "@/composables/useScrollToTop.js"
@@ -10,30 +10,17 @@ const OPTIONS = {
   OPTION_TWO: 'optionTwo',
 }
 
-// const optionOne = ref(localStorage.getItem('option') === OPTIONS.OPTION_ONE)
-// const optionTwo = ref(localStorage.getItem('option') === OPTIONS.OPTION_TWO)
-
 const optionOne = ref(true)
 const optionTwo = ref(false)
-
-onBeforeMount(() => {
-  optionOne.value = localStorage.getItem('option') === OPTIONS.OPTION_ONE
-  optionTwo.value = localStorage.getItem('option') === OPTIONS.OPTION_TWO
-  if (!optionOne.value && optionTwo.value) {
-    optionOne.value = true
-  }
-})
 
 const selectOption = (option: 'optionOne' | 'optionTwo') => {
   if (option === OPTIONS.OPTION_ONE) {
     optionOne.value = true
     optionTwo.value = false
-    window.localStorage.setItem('option', OPTIONS.OPTION_ONE)
   }
   else {
     optionTwo.value = true
     optionOne.value = false
-    window.localStorage.setItem('option', OPTIONS.OPTION_TWO)
   }
 }
 const optionOneClass = computed(() => optionOne.value ? 'option1-selected' : 'option1')
@@ -53,7 +40,7 @@ const componenetSelected = computed(() => {
   </header>
   <section class="options">
     <button :class="optionOneClass"
-      title="obtaind images acording words"
+      title="obtain images acording words"
       @click="selectOption('optionOne')"
     > Get images by fact </button>
     <button :class="optionTwoClass"
@@ -76,10 +63,7 @@ const componenetSelected = computed(() => {
   flex-wrap: nowrap;
 }
 .options button {
-  /* border-radius: 6px; */
-  /* border: 1px solid transparent; */
   padding: 0.4em 4em; 
-  /* font-size: 0.8em;  */
 }
 .option1-selected {
   background-color: rgb(65, 38, 218);
