@@ -1,9 +1,12 @@
 import { shallowMount } from '@vue/test-utils'
 
 import InputAddSubstractVue from './inputAddSubstract.vue'
-
 import { describe, it, expect } from 'vitest'
+// * ojos que nos irve sera por el v-model ese.
 
+
+
+//Props
 // text: string
 // addValue?: number
 // substractValue?: number
@@ -49,8 +52,9 @@ describe('InputAddSubstract', () => {
     })
     
     expect(wrapper.find('input').element.value).toBe('1')
-    await wrapper.find('[data-test="btnAdd"]').trigger('click');
-    // expect(wrapper.find('input').element.value).toBe('2') // no vlae :C
+    await wrapper.find('[data-test="btn-substract"]').trigger('click');
+    console.log(wrapper.find('input').element.value)
+    // expect(wrapper.find('input').element.value).toBe('0') // no vlae :C
   })
 
   it('emits update:modelValue when buttons are clicked', async () => {

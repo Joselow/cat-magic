@@ -119,7 +119,7 @@ onUnmounted(() => {
   <section>
 
     <button 
-      @click="getCats"> Get a cat </button>
+      @click="getCats"> Get cats </button>
     <button 
       :class="{'selected': infiniteScrolling, 'no-selected': !infiniteScrolling }"
       @click="infiniteScrolling = !infiniteScrolling"> Infinite Scrolling </button>        

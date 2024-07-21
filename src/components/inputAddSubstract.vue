@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  computed, ref } from 'vue';
+import {  computed } from 'vue';
 
 interface Props {
   text: string
@@ -68,13 +68,11 @@ const add = () => {
   }
   inputValue.value = Number(inputValue.value) + Number(addValue.value);
 }
-const owo = ref(false)
 
 </script>
 
 <template>
-    <h3 v-if="owo">wn</h3>
-  <button id="test" @click="owo = !owo">a</button>
+
   <div style="text-align: center;">
     <label for=""> {{text}} </label>
       <div>
